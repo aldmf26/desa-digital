@@ -1,15 +1,71 @@
-import {createRouter, createHistory} from 'vue-router';
+import Main from '@/layouts/Main.vue';
 import Dashboard from '../views/Dashboard.vue';
+import {createRouter, createWebHistory} from 'vue-router';
+import Auth from '@/layouts/Auth.vue';
+import Login from '@/views/Login.vue';
+import { useAuthStore } from '@/stores/auth';
 
 const router = createRouter({
-    history: createHistory(import.meta.env.BASE_URL),
+    history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
         {
             path: '/',
-            name: 'dashboard',
-            component: Dashboard
+            component: Main,
+            children: [
+                {
+                    path: '',
+                    name: 'dashboard',
+                    component: Dashboard,
+                    meta: {requireAuth: true, permission: 'dashboard-menu'}
+                }
+            ]
+        },
+        {
+            path:'/login',
+            component: Auth,
+            children: [
+                {
+                    path: '',
+                    name: 'login',
+                    component: Login,
+                    meta: {requireUnauth: true}
+
+                }
+            ]
         }
     ],
 });
+
+router.beforeEach(async (to, from,next) => {
+    const authStore = useAuthStore()
+
+    if(to.meta.requireAuth) {
+        if(authStore.token) {
+            try {
+                if(!authStore.user) {
+                    await authStore.checkAuth()
+                }
+    
+                const userPermissions = authStore.user?.permissions || [];  
+    
+                if(to.meta.permission && !userPermission.includes(to.meta.permission)) {
+                    next({name:'Error 403'})
+                    return
+                }
+    
+                next()
+            } catch (error) {
+                    next({name:'Login'})
+    
+            }
+        } else {
+            next({name:'login'})
+        }
+    } else if(to.meta.requireUnauth && authStore.token) {
+        next({name:'dashboard'})
+    } else {
+        next()
+    }
+})
 
 export default router;
