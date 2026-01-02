@@ -16,7 +16,7 @@ const router = createRouter({
                     path: '',
                     name: 'dashboard',
                     component: Dashboard,
-                    meta: {requireAuth: true, permission: 'dashboard-menu'}
+                    meta: {requiresAuth: true, permission: 'dashboard-menu'}
                 }
             ]
         },
@@ -28,7 +28,7 @@ const router = createRouter({
                     path: '',
                     name: 'login',
                     component: Login,
-                    meta: {requireUnauth: true}
+                    meta: {requiresUnauth: true}
 
                 }
             ]
@@ -39,7 +39,7 @@ const router = createRouter({
 router.beforeEach(async (to, from,next) => {
     const authStore = useAuthStore()
 
-    if(to.meta.requireAuth) {
+    if(to.meta.requiresAuth) {
         if(authStore.token) {
             try {
                 if(!authStore.user) {
@@ -48,20 +48,20 @@ router.beforeEach(async (to, from,next) => {
     
                 const userPermissions = authStore.user?.permissions || [];  
     
-                if(to.meta.permission && !userPermission.includes(to.meta.permission)) {
+                if(to.meta.permission && !userPermissions.includes(to.meta.permission)) {
                     next({name:'Error 403'})
                     return
                 }
     
                 next()
             } catch (error) {
-                    next({name:'Login'})
+                    next({name:'login'})
     
             }
         } else {
             next({name:'login'})
         }
-    } else if(to.meta.requireUnauth && authStore.token) {
+    } else if(to.meta.requiresUnauth && authStore.token) {
         next({name:'dashboard'})
     } else {
         next()

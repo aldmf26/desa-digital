@@ -59,11 +59,11 @@ import Button from '@/components/ui/Button.vue';
                     <section id="Inputs" class="flex flex-col gap-[32px]">
                         <div id="Email-Address" class="flex flex-col gap-4">
                             <h2 class="font-medium leading-5 text-desa-secondary">Email Address</h2>
-                            <Input v-model="form.email" type="email" placeholder="Ketik email disini" :error="error?.email" :icon="IconProfileSecondaryGreen" :filled-icon="IconProfileBlack" />
+                            <Input v-model="form.email" type="email" placeholder="Ketik email disini" :error-message="error?.email" :icon="IconProfileSecondaryGreen" :filled-icon="IconProfileBlack" />
                         </div>
                         <div id="Password" class="flex flex-col gap-4">
                             <h2 class="font-medium leading-5 text-desa-secondary">Password</h2>
-                            <Input v-model="form.password" type="password" placeholder="Ketik password disini" :error="error?.password" :icon="IconKeySecondaryGreen" :filled-icon="IconKeyBlack" />
+                            <Input v-model="form.password" type="password" placeholder="Ketik password disini" :error-message="error?.password" :icon="IconKeySecondaryGreen" :filled-icon="IconKeyBlack" />
                         </div>
                     </section>
                     <Button type="submit" label="Masuk" :loading="loading" />
